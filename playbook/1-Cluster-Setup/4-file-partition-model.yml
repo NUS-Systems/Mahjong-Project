@@ -1,0 +1,28 @@
+---
+- name: Upload Mahjong folder and execute script as root
+  hosts: webservers
+  become: true  # Enable privilege escalation
+  tasks:
+    - name: Copy Mahjong directory to remote server
+      ansible.builtin.copy:
+        src: "{{ playbook_dir | dirname | dirname }}/Mahjong/"
+        dest: /mydata/Mahjong/
+        mode: '0755'
+
+    - name: Execute multiple commands as root
+      ansible.builtin.shell: |
+        cd /mydata/Mahjong/py
+        # # Llama-3.2-1B
+        # python3 4-file-partition.py /mydata/Models/Llama-3.2-1B/model.safetensors /mydata/Chunked-Models/Llama-3.2-1B/ --chunk_size 1320000
+        # # Llama-3.2-3B
+        # python3 4-file-partition.py /mydata/Models/Llama-3.2-3B/model-00001-of-00002.safetensors /mydata/Chunked-Models/Llama-3.2-3B/ --chunk_size 1320000
+        # Llama-3.1-8B
+        python3 4-file-partition.py /mydata/Models/Llama-3.1-8B/model-00001-of-00004.safetensors /mydata/Chunked-Models/Llama-3.1-8B/ --chunk_size 1320000
+        # Ministral-8B
+        # python3 4-file-partition.py /mydata/Models/Ministral-8B-Instruct-2410/model-00001-of-00004.safetensors /mydata/Chunked-Models/Ministral-8B-Instruct-2410/ --chunk_size 1320000
+        # # Qwen2.5-7B-Instruct
+        # python3 4-file-partition.py /mydata/Models/Qwen2.5-7B-Instruct/model-00001-of-00004.safetensors /mydata/Chunked-Models/Qwen2.5-7B-Instruct/ --chunk_size 1320000
+
+
+      args:
+        chdir: /mydata/Mahjong/py

@@ -1,0 +1,51 @@
+---
+- name: Install pip, copy code directory, and install Python packages on Ubuntu 22.04
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Ensure Python3 is installed
+      apt:
+        name: python3
+        state: present
+
+    - name: Install pip for Python 3
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install parallel
+      apt:
+        name: parallel
+        state: present
+
+    - name: Ensure git is installed
+      apt:
+        name: git
+        state: present
+
+    - name: Install specified Python packages with pip
+      pip:
+        name:
+          - editdistance
+          - matplotlib
+          - mlconfig
+          - numpy
+          - pandas
+          - Pillow
+          - pyspoa
+          - tqdm
+          - huggingface_hub
+          - torch
+          - safetensors
+          - reedsolo
+        state: present
+
+    - name: Clone DNAStorageToolkit repository
+      git:
+        repo: 'https://github.com/prongs1996/DNAStorageToolkit.git'
+        dest: /mydata/DNAStorageToolkit
+        update: yes  # 如果仓库已经存在，则更新

@@ -1,0 +1,46 @@
+---
+- name: Ensure destination directory exists on central server
+  hosts: central_server
+  become: true
+  tasks:
+    - name: Create parent directory
+      file:
+        path: /mydata/Collected-Models
+        state: directory
+        mode: '0755'
+
+- name: Copy files using SCP and sudo
+  hosts: webservers
+  gather_facts: no
+  tasks:
+    - name: Copy directory contents to temporary location on central server
+      shell: |
+        scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r /mydata/Recovered-Models/Llama-3.2-1B/ csbingao@clnode316.clemson.cloudlab.us:/tmp/llama_temp/
+      register: script_result
+      until: script_result.rc == 0  # Check if the return code is 0 (success)
+      retries: 3  # Number of times to retry
+      delay: 5    # Delay in seconds between retries
+
+- name: Move files to the final destination using sudo
+  hosts: central_server
+  become: true
+  tasks:
+    - name: Ensure temporary directory exists
+      file:
+        path: /tmp/llama_temp
+        state: directory
+        mode: '0755'
+
+    - name: Move files to the final destination
+      shell: |
+        cp -r /mydata/Recovered-Models/Llama-3.2-1B/ /tmp/llama_temp/
+        mv /tmp/llama_temp/Llama-3.2-1B /mydata/Collected-Models/Llama-3.2-1B
+      register: move_result
+      until: move_result.rc == 0
+      retries: 3
+      delay: 5
+
+    - name: Clean up temporary directory
+      shell: |
+        rm -rf /tmp/llama_temp
+      when: move_result is succeeded

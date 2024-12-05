@@ -1,0 +1,26 @@
+- name: Check file count and directory size in specified folder
+  hosts: webservers
+  gather_facts: no
+  become: true
+  tasks:
+    - name: Get file count and directory size
+      shell: |
+        cd /mydata/Recovered-Models
+        find . -type d | sort | while read dir; do echo -n "$dir: "; find "$dir" -maxdepth 1 -type f | wc -l; done
+
+      register: dir_info
+
+    # - name: Set fact to pass the result back to the control node
+    #   set_fact:
+    #     dir_info_for_local: "Host: {{ inventory_hostname }}\nDirectory Info:\n{{ dir_info.stdout }}"
+
+    # - name: Write output to a local file
+    #   copy: 
+    #     content: "{{ dir_info_for_local }}"
+    #     dest: "/tmp/dir_info_{{ inventory_hostname }}.txt"
+    #   delegate_to: localhost
+
+    # - name: Print the file count and directory size from local file
+    #   local_action:
+    #     module: shell
+    #     cmd: cat /tmp/dir_info_{{ inventory_hostname }}.txt

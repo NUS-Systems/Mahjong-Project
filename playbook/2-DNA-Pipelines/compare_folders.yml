@@ -1,0 +1,42 @@
+---
+- name: Compare binary files in two directories on remote server
+  hosts: webservers
+  gather_facts: no
+  vars:
+    dir1: "/mydata/Chunked-Models/Llama-3.2-1B/bit"  # 第一个文件夹路径
+    dir2: "/mydata/Recovered-Models/Llama-3.2-1B/bit/REDUNDANCY_10_ERROR_0.02_COVERAGE_10"  # 第二个文件夹路径
+  tasks:
+
+    - name: Ensure both directories exist
+      stat:
+        path: "{{ item }}"
+      loop:
+        - "{{ dir1 }}"
+        - "{{ dir2 }}"
+      register: dirs_check
+
+    - name: Fail if directories do not exist
+      fail:
+        msg: "Directory {{ item }} does not exist on remote host."
+      when: not item.stat.exists
+      loop: "{{ dirs_check.results }}"
+
+    - name: Compare files in both directories using shell
+      shell: |
+        # Find files in both directories
+        for file in $(find {{ dir1 }} -type f); do
+          file_in_dir2="{{ dir2 }}${file#{{ dir1 }}}"
+          if [ -f "$file_in_dir2" ]; then
+            # Compare files using cmp (binary comparison)
+            if ! cmp -s "$file" "$file_in_dir2"; then
+              echo "Different: $file"
+            fi
+          fi
+        done
+      register: comparison_result
+      changed_when: false
+
+    - name: Display result
+      debug:
+        msg: "{{ comparison_result.stdout_lines }}"
+      when: comparison_result.stdout != ""

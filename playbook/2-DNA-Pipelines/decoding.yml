@@ -1,0 +1,27 @@
+---
+- name: Upload Mahjong folder and execute script as root
+  hosts: webservers
+  become: true  # Enable privilege escalation
+  tasks:
+    - name: Copy Mahjong directory to remote server
+      ansible.builtin.copy:
+        src: "{{ playbook_dir | dirname | dirname }}/Mahjong/"
+        dest: /mydata/Mahjong/
+        mode: '0755'
+      register: copy_result
+      until: copy_result is succeeded
+      retries: 3  # Number of times to retry
+      delay: 5    # Delay in seconds between retries
+
+    - name: Execute 2-run-left-pipeline.sh script as root
+      ansible.builtin.shell: |
+        # rm -rf /mydata/Recovered-Models/
+        cp /mydata/Mahjong/py/codec.py /mydata/DNAStorageToolkit/1-encoding-decoding/codec.py
+        cp /mydata/Mahjong/cpp/encoder.cpp /mydata/DNAStorageToolkit/1-encoding-decoding/
+        cp /mydata/Mahjong/cpp/decoder.cpp /mydata/DNAStorageToolkit/1-encoding-decoding/
+        cd /mydata/Mahjong/shell
+        bash 2-run-left-pipeline.sh
+      register: script_result
+      until: script_result.rc == 0  # Check if the return code is 0 (success)
+      retries: 3  # Number of times to retry
+      delay: 5    # Delay in seconds between retries

@@ -1,0 +1,16 @@
+---
+- name: Upload Mahjong folder and execute script as root
+  hosts: webservers
+  become: true  # 启用权限提升
+  tasks:
+    - name: Copy Mahjong directory to remote server
+      ansible.builtin.copy:
+        src: "{{ playbook_dir | dirname | dirname }}/Mahjong/"
+        dest: /mydata/Mahjong/
+        mode: '0755'
+
+    - name: Execute 0-model-downloader.py script as root
+      ansible.builtin.shell: python3 py/0-model-downloader.py
+      args:
+        chdir: /mydata/Mahjong
+

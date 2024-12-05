@@ -1,0 +1,48 @@
+---
+- name: Generate SSH keys and distribute them for cluster interconnectivity
+  hosts: webservers
+  gather_facts: no
+  vars:
+    ansible_user: csbingao  # 指定远程用户
+  tasks:
+    - name: Ensure .ssh directory exists
+      file:
+        path: ~/.ssh
+        state: directory
+        mode: '0700'
+    
+    - name: Generate SSH key pair if not present
+      openssh_keypair:
+        path: ~/.ssh/id_rsa
+        type: rsa
+        size: 2048
+        state: present
+      register: keypair
+
+    - name: Copy public key to local control node
+      fetch:
+        src: ~/.ssh/id_rsa.pub
+        dest: ./keys/{{ inventory_hostname }}_id_rsa.pub
+        flat: yes
+      when: keypair.changed
+
+- name: Distribute collected public keys to all remote nodes
+  hosts: webservers
+  gather_facts: no
+  vars:
+    ansible_user: csbingao  # 指定远程用户
+  tasks:
+    - name: Collect all public keys from local
+      find:
+        paths: ./keys
+        patterns: "*.pub"
+      delegate_to: localhost
+      register: public_keys
+
+    - name: Add all public keys to authorized_keys
+      authorized_key:
+        user: csbingao
+        state: present
+        key: "{{ lookup('file', item.path) }}"
+      loop: "{{ public_keys.files }}"
+

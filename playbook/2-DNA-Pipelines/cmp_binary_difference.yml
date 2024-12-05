@@ -1,0 +1,23 @@
+---
+- name: Compare files in two directories on a remote machine
+  hosts: webservers
+  become: true
+  gather_facts: no
+  tasks:
+    - name: Compare files in both directories on remote machine
+      shell: |
+        for file in $(find /mydata/Chunked-Models/Llama-3.2-1B/sequential/ -type f); do
+          base_name=$(basename "$file")
+          if [ -f "/mydata/Recovered-Models/Llama-3.2-1B/sequential/REDUNDANCY_50_ERROR_0.02_COVERAGE_10/$base_name" ]; then
+            cmp --silent "$file" "/mydata/Recovered-Models/Llama-3.2-1B/sequential/REDUNDANCY_50_ERROR_0.01_COVERAGE_10/$base_name" || echo "$base_name is different"
+          else
+            echo "$base_name does not exist in the target directory"
+          fi
+        done
+      register: cmp_result
+      ignore_errors: yes
+
+    - name: Show differences between files
+      debug:
+        msg: "{{ cmp_result.stdout_lines }}"
+      when: cmp_result.stdout != ""

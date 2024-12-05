@@ -1,0 +1,16 @@
+---
+- name: Compare directories on remote host
+  hosts: webservers  # 指定远程主机
+  gather_facts: no
+  become: true  # Enable privilege escalation
+  tasks:
+    - name: Get file diff between two directories
+      shell: |
+        comm -23 <(cd /mydata/Chunked-Models/Llama-3.2-1B/sequential/ && find . -type f | sort) <(cd /mydata/Recovered-Models/Llama-3.2-1B/sequential/REDUNDANCY_50_ERROR_0.01_COVERAGE_10 && find . -type f | sort)
+      register: diff_output
+      args:
+        executable: /bin/bash  # 使用 bash 以支持 <() 语法
+
+    - name: Display files only in dir1
+      debug:
+        msg: "{{ diff_output.stdout_lines }}"

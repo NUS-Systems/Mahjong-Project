@@ -1,0 +1,31 @@
+host_specific_tasks:
+  csbingao@clnode316.clemson.cloudlab.us:
+    range: "0-163"
+  csbingao@clnode289.clemson.cloudlab.us:
+    range: "164-327"
+  csbingao@clnode310.clemson.cloudlab.us:
+    range: "328-491"
+  csbingao@clnode314.clemson.cloudlab.us:
+    range: "492-655"
+  csbingao@clnode292.clemson.cloudlab.us:
+    range: "656-819"
+  csbingao@clnode290.clemson.cloudlab.us:
+    range: "820-983"
+  csbingao@clnode291.clemson.cloudlab.us:
+    range: "984-1147"
+  csbingao@clnode305.clemson.cloudlab.us:
+    range: "1148-1311"
+  csbingao@clnode296.clemson.cloudlab.us:
+    range: "1312-1475"
+  csbingao@clnode298.clemson.cloudlab.us:
+    range: "1476-1639"
+  csbingao@clnode308.clemson.cloudlab.us:
+    range: "1640-1803"
+  csbingao@clnode299.clemson.cloudlab.us:
+    range: "1804-1967"
+  csbingao@clnode293.clemson.cloudlab.us:
+    range: "1968-2131"
+  csbingao@clnode286.clemson.cloudlab.us:
+    range: "2132-2295"
+  csbingao@clnode315.clemson.cloudlab.us:
+    range: "2296-2457"

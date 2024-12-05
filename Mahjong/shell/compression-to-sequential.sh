@@ -1,0 +1,8 @@
+python decompress_bit_interleave.py /home/gaobin/Mahjong-Project/Chunked-Models/Llama-3.2-1B/bit /home/gaobin/Mahjong-Project/Recovered-Models/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.01_COVERAGE_5 /home/gaobin/Mahjong-Project/Compression-to-Bit-Chunks/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.01_COVERAGE_5/
+python bit-to-sequential.py /home/gaobin/Mahjong-Project/Compression-to-Bit-Chunks/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.01_COVERAGE_5/ Bit-to-Seq-Models/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.01_COVERAGE_5
+
+python decompress_bit_interleave.py /home/gaobin/Mahjong-Project/Chunked-Models/Llama-3.2-1B/bit /home/gaobin/Mahjong-Project/Recovered-Models/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.015_COVERAGE_5 /home/gaobin/Mahjong-Project/Compression-to-Bit-Chunks/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.015_COVERAGE_5/
+python bit-to-sequential.py /home/gaobin/Mahjong-Project/Compression-to-Bit-Chunks/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.015_COVERAGE_5/ Bit-to-Seq-Models/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.015_COVERAGE_5
+
+python decompress_bit_interleave.py /home/gaobin/Mahjong-Project/Chunked-Models/Llama-3.2-1B/bit /home/gaobin/Mahjong-Project/Recovered-Models/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.02_COVERAGE_5 /home/gaobin/Mahjong-Project/Compression-to-Bit-Chunks/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.02_COVERAGE_5/
+python bit-to-sequential.py /home/gaobin/Mahjong-Project/Compression-to-Bit-Chunks/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.02_COVERAGE_5/ Bit-to-Seq-Models/Llama-3.2-1B/compression/REDUNDANCY_10_ERROR_0.02_COVERAGE_5

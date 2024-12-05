@@ -1,0 +1,125 @@
+---
+- name: Delete files outside the specified range on each host
+  hosts: webservers
+  gather_facts: no
+  become: yes  # 启用 sudo 权限
+  vars_files:
+    - host_tasks.yml
+  tasks:
+    - name: Delete parts not in the specified range using GNU parallel
+      shell: |
+        start={{ host_specific_tasks[inventory_hostname].range.split('-')[0] }}
+        end={{ host_specific_tasks[inventory_hostname].range.split('-')[1] }}
+        echo "Host is deleting parts outside the range $start-$end"
+        find /mydata/Chunked-Models/Llama-3.2-1B/sequential -type f -name 'model.safetensors.part.*' \
+          | while read part; do
+              part_number=$(basename $part | sed 's/model.safetensors.part.//')
+              if (( part_number < start || part_number > end )); then
+                echo $part
+              fi
+            done \
+          | parallel -j 100 rm -f
+      args:
+        executable: /bin/bash
+      when: inventory_hostname in host_specific_tasks
+
+    # - name: Delete parts not in the specified range using GNU parallel
+    #   shell: |
+    #     start={{ host_specific_tasks[inventory_hostname].range.split('-')[0] }}
+    #     end={{ host_specific_tasks[inventory_hostname].range.split('-')[1] }}
+    #     echo "Host is deleting parts outside the range $start-$end"
+    #     find /mydata/Chunked-Models/Llama-3.2-1B/component -type f -name 'model.safetensors.part.*' \
+    #       | while read part; do
+    #           part_number=$(basename $part | sed 's/model.safetensors.part.//')
+    #           if (( part_number < start || part_number > end )); then
+    #             echo $part
+    #           fi
+    #         done \
+    #       | parallel -j 100 rm -f
+    #   args:
+    #     executable: /bin/bash
+    #   when: inventory_hostname in host_specific_tasks
+
+    
+    # - name: Delete parts not in the specified range using GNU parallel
+    #   shell: |
+    #     start={{ host_specific_tasks[inventory_hostname].range.split('-')[0] }}
+    #     end={{ host_specific_tasks[inventory_hostname].range.split('-')[1] }}
+    #     echo "Host is deleting parts outside the range $start-$end"
+    #     find /mydata/Chunked-Models/Llama-3.2-1B/bit -type f -name 'model.safetensors.part.*' \
+    #       | while read part; do
+    #           part_number=$(basename $part | sed 's/model.safetensors.part.//')
+    #           if (( part_number < start || part_number > end )); then
+    #             echo $part
+    #           fi
+    #         done \
+    #       | parallel -j 100 rm -f
+    #   args:
+    #     executable: /bin/bash
+    #   when: inventory_hostname in host_specific_tasks
+
+    # - name: Delete parts not in the specified range using GNU parallel
+    #   shell: |
+    #     start={{ host_specific_tasks[inventory_hostname].range.split('-')[0] }}
+    #     end={{ host_specific_tasks[inventory_hostname].range.split('-')[1] }}
+    #     echo "Host is deleting parts outside the range $start-$end"
+    #     find /mydata/Chunked-Models/Llama-3.2-1B/compression -type f -name 'model.safetensors.part.*' \
+    #       | while read part; do
+    #           part_number=$(basename $part | sed 's/model.safetensors.part.//')
+    #           if (( part_number < start || part_number > end )); then
+    #             echo $part
+    #           fi
+    #         done \
+    #       | parallel -j 100 rm -f
+    #   args:
+    #     executable: /bin/bash
+    #   when: inventory_hostname in host_specific_tasks
+
+
+    # - name: Delete parts not in the specified range for bit folder
+    #   shell: |
+    #     start={{ host_specific_tasks[inventory_hostname].range.split('-')[0] }}
+    #     end={{ host_specific_tasks[inventory_hostname].range.split('-')[1] }}
+    #     echo "Host is deleting parts outside the range $start-$end in bit folder"
+    #     find /mydata/Chunked-Models/Llama-3.2-1B/bit -type f -name 'model.safetensors.part.*' \
+    #       | while read part; do
+    #         part_number=$(basename $part | sed 's/model.safetensors.part.//')
+    #         if (( part_number < start || part_number > end )); then
+    #           echo "Deleting $part"
+    #           rm -f "$part"
+    #         else
+    #           echo "Keeping $part"
+    #         fi
+    #       done
+    #   args:
+    #     executable: /bin/bash
+    #   when: inventory_hostname in host_specific_tasks
+
+    # - name: Delete parts not in the specified range for component folder
+    #   shell: |
+    #     start={{ host_specific_tasks[inventory_hostname].range.split('-')[0] }}
+    #     end={{ host_specific_tasks[inventory_hostname].range.split('-')[1] }}
+    #     echo "Host is deleting parts outside the range $start-$end in component folder"
+    #     find /mydata/Chunked-Models/Llama-3.2-1B/component -type f -name 'model.safetensors.part.*' \
+    #       | while read part; do
+    #         part_number=$(basename $part | sed 's/model.safetensors.part.//')
+    #         if (( part_number < start || part_number > end )); then
+    #           echo "Deleting $part"
+    #           rm -f "$part"
+    #         else
+    #           echo "Keeping $part"
+    #         fi
+    #       done
+    #   args:
+    #     executable: /bin/bash
+    #   when: inventory_hostname in host_specific_tasks
+
+    # - name: Delete parts not in the specified range for compression folder
+    #   shell: |
+    #     start={{ host_specific_tasks[inventory_hostname].range.split('-')[0] }}
+    #     end={{ host_specific_tasks[inventory_hostname].range.split('-')[1] }}
+    #     echo "Host is deleting parts outside the range $start-$end in compression folder"
+    #     find /mydata/Chunked-Models/Llama-3.2-1B/compression -type f -name 'model.safetensors.part.*' \
+    #       | while read part; do
+    #         part_number=$(basename $part | sed 's/model.safetensors.part.//')
+    #         if (( part...

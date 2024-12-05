@@ -1,0 +1,33 @@
+---
+- name: Delete files outside the specified range on each host
+  hosts: webservers
+  gather_facts: no
+  become: yes  # 启用 sudo 权限
+  vars_files:
+    - host_tasks_part2.yml
+  tasks:
+    - name: Get list of all parts
+      find:
+        paths: "/mydata/Chunked-Models/Qwen2.5-7B-Instruct/"
+        patterns: "model-00002-of-00004.safetensors.part.*"
+      register: all_parts
+
+    - name: Delete parts not in the specified range
+      shell: |
+        start={{ host_specific_tasks[inventory_hostname].range.split('-')[0] }}
+        end={{ host_specific_tasks[inventory_hostname].range.split('-')[1] }}
+        echo "Host is deleting parts outside the range $start-$end"
+        for part in $(seq 0 5000); do
+          part_file="/mydata/Chunked-Models/Qwen2.5-7B-Instruct/model-00002-of-00004.safetensors.part.$part"
+          if [ -f "$part_file" ]; then
+            if (( part < start || part > end )); then
+              echo "Deleting $part_file"
+              rm -f "$part_file"
+            else
+              echo "Keeping $part_file"
+            fi
+          fi
+        done
+      args:
+        executable: /bin/bash
+      when: inventory_hostname in host_specific_tasks
